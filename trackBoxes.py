@@ -21,8 +21,9 @@ boxes_method = 'centroid'  # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 # if other method, can leave these commented out
-#principle_components =   [ V[0],V[1],V[2],V[3] ] 
-#boxes_meanframe = meanframe
+if analyze_method == 'pca' :
+    principle_components =   [ V[0],V[1],V[2],V[3] ] 
+    boxes_meanframe = meanframe
 
 ## use below to overide parameter values from common.py
 ######################################################################
@@ -95,9 +96,9 @@ if boxes_method in ylabels.keys():
     print("analyzed {} particles per image".format(dims[0]))
 
     # create plots
-    xlabel = 'image number'
-    plot_title = 'track boxes results using ' + boxes_method
-    pa.makeplots(data, xlabel=xlabel, ylabel=ylabels[boxes_method], title=plot_title)
+    pa.makeplots(data, xlabel = 'image number', \
+                 ylabel=ylabels[boxes_method], \
+                 title= 'track boxes results using ' + boxes_method )
  
 else:
     print("choose intensity, centroid, gauss or pca.")

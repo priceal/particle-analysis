@@ -9,7 +9,7 @@
 #          PRODUCED BY THE ANALYSIS METHOD CHOSE
 
 # here define the array of frames to analyze
-tracks_data = data         # input data, use copy()
+tracks_data = data        # input data, use copy()
 
 # here define the method of tracking
 tracks_method = 'stats'    # only 'stats' available now
@@ -23,16 +23,16 @@ tracks_scatter = True
 
 ############################################################
 ############################################################
-num_tracks, num_images, num_dims = data.shape
+num_tracks, num_images, num_dims = tracks_data.shape
 print( num_tracks, 'tracks loaded for analysis by method:', tracks_method)
 print( num_images, 'time points for each track.')
 print(num_dims, "dimensions of data to analyze per track.")
 
 # now perform tracking depending on method chosen
 if tracks_method == 'stats':
-    data_mean = data.mean(axis=1)
-    data_std = data.std(axis=1)
-    data_var = data.var(axis=1)
+    data_mean = tracks_data.mean(axis=1)
+    data_std = tracks_data.std(axis=1)
+    data_var = tracks_data.var(axis=1)
 
 else:
     print("Choose stats method.")

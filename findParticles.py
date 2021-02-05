@@ -12,7 +12,7 @@ v. 2021 02 02
 """
 
 # parameters for peak picking
-minimum_value = 55     # only peaks with intensity above this are returned
+minimum_value = 200     # only peaks with intensity above this are returned
 maximum_number = 1000   # cut off peak finding after this number are found
 
 # source of image for peak picking. if 'file', you must set path 
@@ -51,24 +51,6 @@ if findparticles_source == 'file' or findparticles_source == 'image':
     
 else:
     print('Set source to image or image file.')
-    
-    
-    
-    
-    
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 pa.showPeaks(findparticles_image,xy)
 print('maximum / minimum peak intensity: {} / {}'.format(amplitudes.max(),amplitudes.min()))
