@@ -7,7 +7,7 @@ data     RESULTS OF ANALYSIS, SHAPE = (NUMFRAMES,NUMDIMENSIONS)
          WHERE NUMDIMENSIONS IS THE NUMBER OF DIMENSIONS OF DATA
          PRODUCED BY THE ANALYSIS METHOD CHOSE
          
-v. 2021 01 27
+v. 2021 02 02
 
 """
 
@@ -19,16 +19,17 @@ analyze_method = 'pca'    # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 # if other method, can leave these commented out
-analyze_components =  [ V[0], V[1], V[2] ]
+analyze_components =  [ V[1], V[2] ]
 analyze_meanframe = meanframe
 
 # choose to plot tracking results versus frame number also
-scatter_plot = True
 full_plot = True
+scatter_plot = True
+number_bins = 40
 
 ## use below to overide parameter values from common.py
 ######################################################################
-analyze_background = False      # set to background to use default
+analyze_background = background      # set to background to use default
 analyze_normalize = normalize       # set to normalize to use default
 
 ############################################################
@@ -91,17 +92,17 @@ if scatter_plot == True:
     top = ycenter + 0.55*span
     clrs = np.arange(numpoints)*255.0/numpoints
 
-    figc, axc = plt.subplots(2,2,sharex='col',sharey='row')
+    figc, axc = plt.subplots(2,2,sharex='col',sharey='row',figsize=[7,7])
     figc.suptitle(analyze_method + ' analysis scatter plot ' )
     axc[1,0].set_aspect(1.0)
     axc[1,0].set_xlim(left,right)
     axc[1,0].set_ylim(top,bottom)
-    axc[1,0].scatter(x,y,c=clrs,cmap='prism',marker='.',)
+    axc[1,0].scatter(x,y,c=clrs,cmap='viridis',marker='.',)
     axc[1,0].grid(True)
-    axc[0,0].plot(x,range(numpoints),'b.-')
-    axc[1,1].plot(range(numpoints),y,'b.-')
-    axc[1,0].set_xlabel('x')
-    axc[1,0].set_ylabel('y')
+    axc[0,0].hist(x,bins=number_bins)
+    axc[1,1].hist(y,bins=number_bins,orientation='horizontal')
+    axc[1,0].set_xlabel(ylabel[0])
+    axc[1,0].set_ylabel(ylabel[1])
     axc[0,0].set_ylabel('frame number')
     axc[1,1].set_xlabel('frame number')
 

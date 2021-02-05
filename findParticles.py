@@ -4,15 +4,15 @@ Each particle should be only peak in neighborhood, whose size is given
 by ROI parameters (x_buffer and y_buffer)
 
 VARIABLE SET BY SCRIPT:
-amplitudes    THE MAX INTENSITIES OF THE PEAKS FOUND IN IMAGE
-xy            THE X,Y PIXEL COORDS OF PEAKS FOUND IN IMAGE
+amplitudes    THE MAX INTENSITIES OF THE PARTICLES FOUND IN IMAGE
+xy            THE X,Y PIXEL COORDS OF PARTICLES FOUND IN IMAGE
 
-v. 2021 01 27
+v. 2021 02 02
 
 """
 
 # parameters for peak picking
-minimum_value = 60     # only peaks with intensity above this are returned
+minimum_value = 55     # only peaks with intensity above this are returned
 maximum_number = 1000   # cut off peak finding after this number are found
 
 # source of image for peak picking. if 'file', you must set path 
@@ -32,26 +32,42 @@ findparticles_border = border           # remove border region
 # do not change code below this line
 ######################################################################
 ######################################################################
-if findparticles_source == 'file':  
-    findparticles_image_path = os.path.join(findparticles_directory,findparticles_image_file)
-    findparticles_image = pa.loadim(findparticles_image_path)
-    xy,amplitudes = \
-        pa.findPeaks(findparticles_image,bx=findparticles_width,\
-                     by=findparticles_height,maxnum=maximum_number,\
-                     minval=minimum_value, border=findparticles_border)
-            
-    print('{} particles found using image file {}'.format(len(xy),findparticles_image_file))
-    
-elif findparticles_source == 'image':  
-    xy,amplitudes = \
-        pa.findPeaks(findparticles_image,bx=findparticles_width,\
-                     by=findparticles_height,maxnum=maximum_number,
-                     minval=minimum_value, border=findparticles_border)
-            
-    print('{} particles found using image'.format(len(xy)))
 
+if findparticles_source == 'file' or findparticles_source == 'image':
+    
+    if findparticles_source == 'file':  
+        findparticles_image_path = os.path.join(findparticles_directory,findparticles_image_file)
+        print('loading image file {}...'.format(findparticles_image_path))
+        findparticles_image = pa.loadim(findparticles_image_path)
+    
+    elif findparticles_source == 'image':  
+        print("using image...")
+
+    xy, amplitudes = pa.findPeaks(findparticles_image,bx=findparticles_width,\
+                                  by=findparticles_height,maxnum=maximum_number,\
+                                  minval=minimum_value, border=findparticles_border)
+            
+    print('{} particles found'.format(len(xy)))
+    
 else:
     print('Set source to image or image file.')
+    
+    
+    
+    
+    
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 pa.showPeaks(findparticles_image,xy)

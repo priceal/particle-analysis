@@ -3,7 +3,7 @@ particle analysis module
 contains functions for analyzing video data from BLAs functions, can detect 
 peaks and allow user to examine in various ways
 
-v. 2021 01 27
+v. 2021 02 01
 
 """
 
@@ -445,7 +445,7 @@ def cropframes(image,xy,bx=3,by=3):
         yl,yu,xl,xu = box(center,image.shape,bx=bx,by=by)
         listall.append(image[yl:yu,xl:xu].copy())
     
-    return listall
+    return np.array(listall)
 
 #########################################################################
 #########################################################################
@@ -1125,7 +1125,7 @@ def statframes(frames, back = False):
 #################################################################
 #################################################################
 
-def pcaframe(frame, meani, vlist):
+def pcaframe(inputframe, meani, vlist, back = False):
     """
     returns PCA for the peak in a single frame. 
 
@@ -1144,7 +1144,13 @@ def pcaframe(frame, meani, vlist):
         DESCRIPTION.
 
     """
-
+   # correct for backround if asked to, in which case it is assumed that
+   # the meani was calculated with the background corrected frames
+    if back == True:
+        frame = background_single(inputframe)
+    else:
+        frame = np.copy(inputframe)
+        
     framec = frame - meani
     amplitude = []
     for v in vlist:
@@ -1155,7 +1161,7 @@ def pcaframe(frame, meani, vlist):
 #################################################################
 #################################################################
 
-def pcaframes(frames, meani, vlist):
+def pcaframes(frames, meani, vlist, back = False ):
     """
     returns PCA for the peak in an array of frames, can be used
     for tracking if array is time ordered images of same particle
@@ -1178,7 +1184,7 @@ def pcaframes(frames, meani, vlist):
 
     listall = []
     for single in frames:
-        listall.append(pcaframe(single, meani, vlist))
+        listall.append(pcaframe(single, meani, vlist, back = back))
     
     return np.array(listall)
 

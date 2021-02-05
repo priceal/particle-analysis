@@ -22,7 +22,7 @@ frames_image = image         # define image if 'image' chosen
 # in frames_directory---this option is for creating a time history 
 # of a single particle
 frames_xy = xy
-#frames_xy = xy[100]
+#frames_xy = xy[10]  #use this option if choosing 'directory' 
 
 ## use below to overide parameter values from common.py
 ######################################################################

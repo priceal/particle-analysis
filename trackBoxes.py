@@ -14,15 +14,15 @@ v. 2021 02 02
 boxes_source = 'files'      # only 'files' available for now
 
 # define boxes xy ---list of centers of boxes
-boxes_xy = xy[:10]
+boxes_xy = xy
 
 # define tracking method
-boxes_method = 'pca'  # either 'intensity, 'centroid', 'gauss' or 'pca'
+boxes_method = 'centroid'  # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 # if other method, can leave these commented out
-principle_components =   [ V[0],V[1],V[2],V[3] ] 
-boxes_meanframe = meanframe
+#principle_components =   [ V[0],V[1],V[2],V[3] ] 
+#boxes_meanframe = meanframe
 
 ## use below to overide parameter values from common.py
 ######################################################################
