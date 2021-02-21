@@ -7,15 +7,15 @@ data     RESULTS OF ANALYSIS, SHAPE = (NUMFRAMES,NUMDIMENSIONS)
          WHERE NUMDIMENSIONS IS THE NUMBER OF DIMENSIONS OF DATA
          PRODUCED BY THE ANALYSIS METHOD CHOSE
          
-v. 2021 02 02
+v. 2021 02 11
 
 """
-
-# here define the array of frames to analyze
-analyze_frames = frames
+# set frames to analyze: xy = the xy dataframe and image = image number
+analyze_xy = particle0
+analyze_image = 0
 
 # here define the method of tracking
-analyze_method = 'pca'    # either 'intensity, 'centroid', 'gauss' or 'pca'
+analyze_method = 'centroid'    # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 # if other method, can ignore these
@@ -30,11 +30,19 @@ number_bins = 40   # for histograms in scatter plot
 
 ## use below to overide parameter values from common.py
 ######################################################################
+analyze_width = buffer_width              
+analyze_height = buffer_height
 analyze_background = background   # set to background to use default
 analyze_normalize = normalize       # set to normalize to use default
 
 ############################################################
 ############################################################
+
+# load in the frames
+analyze_frames = pa.cropframes(analyze_image, analyze_xy, \
+                                     bx = analyze_width, \
+                                     by = analyze_height, \
+                                     imgDF = imageDF)   
 num_frames = len(analyze_frames)
 print( num_frames, 'frames loaded for analysis.')
 
@@ -61,10 +69,10 @@ if analyze_method in analyzeMethods.keys():
 
     # now perform tracking depending on method chosen
     if analyze_method == 'intensity':
-        data = pa.statframes(analyze_frames, back = analyze_background)[:,0:3]
+        data = pa.statframes_(analyze_frames, back = analyze_background)[:,0:3]
         
     elif analyze_method == 'centroid':
-        data = pa.statframes(analyze_frames, back = analyze_background)[:,3:8]
+        data = pa.statframes_(analyze_frames, back = analyze_background)[:,3:8]
         
     elif analyze_method == 'gauss':
         data = pa.fitframes(analyze_frames, back = analyze_background)

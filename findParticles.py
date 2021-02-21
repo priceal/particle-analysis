@@ -4,69 +4,62 @@ Each particle should be only peak in neighborhood, whose size is given
 by ROI parameters (x_buffer and y_buffer)
 
 VARIABLE SET BY SCRIPT:
-amplitudes    THE MAX INTENSITIES OF THE PARTICLES FOUND IN IMAGE
-xy            THE X,Y PIXEL COORDS OF PARTICLES FOUND IN IMAGE
+xyN         data frame containing the X,Y PIXEL COORDS OF PARTICLES FOUND 
+            and the intensities of the peaks, N is the image number
 
-v. 2021 02 02
+v. 2021 02 13
 
 """
-
 # parameters for peak picking
-minimum_value = 50     # only peaks with intensity above this are returned
-maximum_number = 2000   # cut off peak finding after this number are found
+minimum_value = 10    # only peaks with intensity above this are returned
+maximum_number = 1000   # cut off peak finding after this number are found
+# image number to use for picking
+findparticlesImageNumber = 0
 
-# source of image for peak picking. if 'file', you must set path 
-# variables below, if 'image' you must set image variables
-findparticles_source = 'file'      # 'image' or 'file'
+# for particle filtering added as a pre-filter
+findparticles_prefilter = False
+if findparticles_prefilter:
+    sigma = 2.0 # smoothing HWHH
+    dims = (11,11) # window size for particle filter kernel
+    norm = 3.0    # normalization for +kernal portion
 
-#type in the name for the output xy array
-findparticles_output = 'xy'
-
-if findparticles_source == 'image':
-    findparticles_image = image   # define image if 'image' chosen
     
 # use below to overide parameter values from common.py
 ######################################################################
-findparticles_directory = image_directory   # directory where image file is stored
-findparticles_image_file = image_file   # name of image file
 findparticles_width = buffer_width      # x buffer size for zero-ing out peak after picking
 findparticles_height = buffer_height    # y buffer size for zero-ing out peak after picking
 findparticles_border = border           # remove border region
-
+findparticles_imageDF = imageDF         # dataframe containing list of image file paths
 ######################################################################
+
 # do not change code below this line
 ######################################################################
 ######################################################################
-
-if findparticles_source == 'file' or findparticles_source == 'image':
-    
-    if findparticles_source == 'file':  
-        findparticles_image_path = os.path.join(findparticles_directory,findparticles_image_file)
-        print('loading image file {}...'.format(findparticles_image_path))
-        findparticles_image = pa.loadim(findparticles_image_path)
-    
-    elif findparticles_source == 'image':  
-        print("using image...")
-
-    xy, amplitudes = pa.findPeaks(findparticles_image,bx=findparticles_width,\
-                                  by=findparticles_height,maxnum=maximum_number,\
-                                  minval=minimum_value, border=findparticles_border)
-            
-    print('{} particles found'.format(len(xy)))
-    
+# if pre-filtering, load and filter image, set findparticlesImage to the 
+# filtered image. If not, set findparticlesImage = findparticlesImageNumber
+if findparticles_prefilter:
+    image = pa.loadim( imageDF['path'][findparticlesImageNumber] )
+    findparticlesImage = pa.particleFilter(image,sigma,dims,norm=norm)
 else:
-    print('Set source to image or image file.')
+    findparticlesImage = findparticlesImageNumber
     
-pa.showPeaks(findparticles_image,xy)
-print('maximum / minimum peak intensity: {} / {}'.format(amplitudes.max(),amplitudes.min()))
-print('mean / STD peak intensity: {:3.2f} / {:3.2f}'.format(amplitudes.mean(),amplitudes.std()))
+# create the data frame to hold results
+findparticles_output = 'particle' + str(findparticlesImageNumber)
+print( 'creating DataFrame ' + findparticles_output + ' ...')
+exec( findparticles_output + ' = pd.DataFrame( { "x" : [], "y" : [], \
+                             "intensity" : [] } )' )
 
-fig, ax = plt.subplots()
-ax.hist(amplitudes,bins=100)
-ax.set_ylabel('frequency')
-ax.set_xlabel('intensity')
-plt.title(image_path)
+# call particle finding function and report summary of results
+print('finding particles in image {}: {} ...'.\
+      format(findparticlesImageNumber,imageDF['path'][findparticlesImageNumber]) )
+pa.findPeaks(findparticlesImage, eval(findparticles_output), imgDF = imageDF, \
+             bx=findparticles_width, by=findparticles_height, \
+             maxnum=maximum_number, minval=minimum_value, \
+             border=findparticles_border)
+print('SUMMARY OF RESULTS: ' + findparticles_output)
+print(eval(findparticles_output).describe())
 
-# set the chosen output variable to be a copy of the xy array
-exec( findparticles_output + ' = np.copy(xy)' )
-
+# create plots for evaluation
+pa.showPeaks(findparticlesImage, \
+             eval(findparticles_output)[['x','y']].to_numpy(), imgDF = imageDF )
+eval(findparticles_output).hist(column='intensity',bins=50)

@@ -1,9 +1,9 @@
 """
 particle analysis module
-contains functions for analyzing video data from BLAs functions, can detect 
+contains functions for analyzing video data from BLAs, can detect 
 peaks and allow user to examine in various ways
 
-v. 2021 02 01
+v. 2021 02 10
 
 """
 
@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2 as cv
 from scipy.optimize import curve_fit
+#import gauss as g
+import pandas as pd
 import gauss as g
 
 ##############################################################################
@@ -213,6 +215,39 @@ def loadimm(directory, rang=(0,-1)):
         listall.append(raw)
         
     return listall
+
+
+###############################################################
+#################################################################
+
+def loadDir(directory, rang=(0,-1)):
+    """
+    load multiple image files and return a list of gray scale openCV images
+
+    Parameters
+    ----------
+    directory : string
+        absolute or relative path to image directory
+    rang : 2-tuple, optional
+        range of images to include. The default is (0,-1).
+
+    Returns
+    -------
+    dataframe
+        ordered paths to each file with index
+
+    """
+
+    initial, final = rang
+    # set input directory and get list of files, sort
+    input_directory = returnpath(directory)
+    dir_list = os.listdir(input_directory)
+    dir_list_sorted = heapsort(dir_list)
+    return_list = [ os.path.join(input_directory,s) for s in dir_list_sorted ]
+        
+    directoryDict = { 'path' : return_list }
+        
+    return pd.DataFrame(directoryDict)
 
 ##############################################################################
 ##############################################################################
@@ -416,7 +451,7 @@ def cutframe(images,center,bx=3,by=3):
 #################################################################
 #################################################################
 
-def cropframes(image,xy,bx=3,by=3):
+def cropframes(image,xy,bx=3,by=3,imgDF=None):
     """
     cut out subframes from image file and store in array.
     returns a 3D array, the first dim is the frame number,
@@ -439,9 +474,15 @@ def cropframes(image,xy,bx=3,by=3):
          a list of 2D arrays described above.
 
     """
-
+    if isinstance(image,int):  # image index given
+        image = loadim( imgDF['path'][image] )
+    elif isinstance(image,str):  # image filename or path given
+        image = loadim( returnpath(image) )
+    else:  # image passed to function
+        pass
+    
     listall = []
-    for center in xy:
+    for center in xy[['x','y']].to_numpy():
         yl,yu,xl,xu = box(center,image.shape,bx=bx,by=by)
         listall.append(image[yl:yu,xl:xu].copy())
     
@@ -745,7 +786,8 @@ def countPeaks(img,bx=3,by=3,maxnum=1000,minval=0,border=False):
 ##############################################################################
 ##############################################################################
 
-def findPeaks(img,bx=3,by=3,maxnum=1000,minval=0,border=False):
+def findPeaks(image, outputDF, imgDF = None, bx=3, by=3, maxnum=1000, \
+              minval=0, border=False):
     """
     find peaks in a provided image. image should be a PIL image. 
     finds peaks by locating maximum intensity, then setting surrounding
@@ -773,31 +815,32 @@ def findPeaks(img,bx=3,by=3,maxnum=1000,minval=0,border=False):
         list of peak coordinates in format [[x1,y1], [x2,y2] ...]
 
     """
-    
+    if isinstance(image,int):  # image index given
+        image = loadim( imgDF['path'][image] )
+    elif isinstance(image,str):  # image filename or path given
+        image = loadim( returnpath(image) )
+    else:  # image passed to function
+        pass
+     
     # set border around image to zero to eliminate peaks at edge
     if border == True:
-        frame = cv.copyMakeBorder(img[by:-by,bx:-bx],by,by,bx,bx,\
+        frame = cv.copyMakeBorder(image[by:-by,bx:-bx],by,by,bx,bx,\
                                   cv.BORDER_CONSTANT,0)
     else:
-        frame = np.copy(img)
+        frame = np.copy(image)
     
-    listxy, listvalue = [], []
     n = 0; imax = 99999
     while n <= maxnum and imax >= minval :
         
-#        _,imax,_,xymax = cv.minMaxLoc(frame)
         ymax, xmax = np.unravel_index(np.argmax(frame),frame.shape)
         imax = frame[ymax,xmax]
-        listxy.append([xmax,ymax])
-        listvalue.append(imax)
+        outputDF.loc[n] = [ xmax, ymax, imax ]
         yl,yu,xl,xu = box((xmax,ymax),frame.shape,bx=bx,by=by)
         frame[yl:yu,xl:xu]=np.zeros([yu-yl,xu-xl])
         n += 1
-    
-#    framestats = [frame.mean(), frame.std(), frame.max(), frame.min()]
-    return np.array(listxy)[:-1], np.array(listvalue)[:-1]
-
-
+        
+    outputDF.drop(len(outputDF)-1,inplace=True) # drop last one
+    return 
 
 ##############################################################################
 ##############################################################################
@@ -811,7 +854,7 @@ def findPeaks(img,bx=3,by=3,maxnum=1000,minval=0,border=False):
 ##############################################################################
 ##############################################################################
 
-def showPeaks(image,xy):
+def showPeaks(image, xy, imgDF=None):
     """
     display an image and overlays peak locations on top
     image can be any image format or NxM array of intensities
@@ -829,6 +872,12 @@ def showPeaks(image,xy):
     None.
 
     """
+    if isinstance(image,int):  # image index given
+        image = loadim( imgDF['path'][image] )
+    elif isinstance(image,str):  # image filename or path given
+        image = loadim( returnpath(image) )
+    else:  # image passed to function
+        pass
     
     fig, ax = plt.subplots()
     ax.imshow(image,cmap='gray',interpolation='nearest')
@@ -1021,12 +1070,6 @@ def showimage(image,title):
     
     return
 
-
-
-
-
-
-
 ##############################################################################
 ##############################################################################
 #                                          ###################################
@@ -1035,8 +1078,85 @@ def showimage(image,title):
 ##############################################################################
 ##############################################################################
 
-def statframe(inputframe, back = False):
+def statframe(inputframe, outputDF, back = False, partNum=0, imageNum=0):
     """
+    returns statistics for the peak in a single frame. 
+    note that first index is vertical coordinate, and second is horizontal
+    the function will try to correct for background with a simple method
+    of subtracting the mean value of the border pixels. Then it will
+    set negative values to zero.
+
+    Parameters
+    ----------
+    frame : TYPE
+        the image frame = an array
+    back : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+
+    """
+    # correct for backround if asked to
+    if back == True:
+        frame = background_single(inputframe)
+    else:
+        frame = np.copy(inputframe)
+            
+    # the matrices for the moments
+    total = frame.sum(dtype=float)
+    X, Y = np.meshgrid(  np.arange(frame.shape[1]), np.arange(frame.shape[0]) )
+    XX, YY, XY = X*X, Y*Y, X*Y
+    
+    Xmean = (frame*X).sum(dtype=float)/total
+    Ymean = (frame*Y).sum(dtype=float)/total
+    XXmean = (frame*XX).sum(dtype=float)/total
+    YYmean = (frame*YY).sum(dtype=float)/total
+    XYmean = (frame*XY).sum(dtype=float)/total
+    
+    DX2 = XXmean - Xmean*Xmean
+    DY2 = YYmean - Ymean*Ymean
+    DXY = XYmean - Xmean*Ymean
+
+    outputDF.loc[len(outputDF)]=[partNum, imageNum, frame.max(), frame.min(), \
+                                 frame.sum(), Xmean, Ymean, DX2, DXY, DY2]
+
+    return 
+
+#################################################################
+#################################################################
+
+def statframes(frames, outputDF, back = False, indices=False, imageNum=0):
+    """
+    returns stats on multiple frames. see statframe for details.
+
+    Parameters
+    ----------
+    frames : TYPE
+        DESCRIPTION.
+    back : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    if isinstance(indices,bool):
+        indices = range(len(frames))
+        
+    for single,index in zip(frames,indices):
+        statframe(single,outputDF,back=back,partNum=index,imageNum=imageNum)
+    
+    return 
+
+#################################################################
+#################################################################
+
+def statframe_(inputframe, back = False):
+    """
+    legacy version that takes array
     returns statistics for the peak in a single frame. 
     note that first index is vertical coordinate, and second is horizontal
     the function will try to correct for background with a simple method
@@ -1098,9 +1218,10 @@ def statframe(inputframe, back = False):
 #################################################################
 #################################################################
 
-def statframes(frames, back = False):
+def statframes_(frames, back = False):
     """
     returns stats on multiple frames. see statframe for details.
+    legacy version that takes array of arrays.
 
     Parameters
     ----------
@@ -1118,7 +1239,7 @@ def statframes(frames, back = False):
 
     listall = []
     for single in frames:
-        listall.append(statframe(single, back = back))
+        listall.append(statframe_(single, back = back))
     
     return np.array(listall)
 
@@ -1246,7 +1367,7 @@ def fitframe(inputframe, back = False):
     xmax, ymax = xnum - 1, ynum - 1   # max indices
     
     # use stats to determine initial values for fit
-    Ao, imin, isum, xo, yo, vxx, vxy, vyy = statframe(frame)
+    Ao, imin, isum, xo, yo, vxx, vxy, vyy = statframe_(frame)
     sigmao = np.sqrt(max(vxx,vyy))
     
     x = np.linspace( 0, xmax,  xnum) # x range = 0 to xmax
@@ -1274,3 +1395,27 @@ def fitframe(inputframe, back = False):
 
 #################################################################      
 ###############################################################
+
+
+#################################################################
+###############################################################
+# run through output of integration and return lifetime of each
+# particle, using threshold method
+#
+#################################################################
+
+def threshold(data, threshold=100):
+
+    duration = len(data)   # number of frames
+    frame = 0
+    while (data.iloc[frame,1] > threshold) & (data.iloc[frame,0] < duration-1):
+        frame = frame + 1
+
+    return frame
+
+
+
+
+
+
+
