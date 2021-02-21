@@ -21,9 +21,12 @@ boxes_method = 'centroid'  # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 # if other method, can leave these commented out
-if analyze_method == 'pca' :
+if boxes_method == 'pca' :
     principle_components =   [ V[0],V[1],V[2],V[3] ] 
     boxes_meanframe = meanframe
+
+#if you want histograms of parameters set to True
+boxes_hist = True
 
 ## use below to overide parameter values from common.py
 ######################################################################
@@ -100,6 +103,14 @@ if boxes_method in ylabels.keys():
                  ylabel=ylabels[boxes_method], \
                  title= 'track boxes results using ' + boxes_method )
  
+    if boxes_hist == True:
+        
+        fig, ax = plt.subplots(dims[2],1)
+        axflat = ax.flatten()
+        for i in range(dims[2]) :
+            axflat[i].hist(data.reshape(dims[0]*dims[1],dims[2])[:,i],bins=100)
+            plt.title(ylabels[boxes_method][i])   
+        
 else:
     print("choose intensity, centroid, gauss or pca.")
         

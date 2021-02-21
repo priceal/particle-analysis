@@ -12,14 +12,19 @@ v. 2021 02 02
 """
 
 # parameters for peak picking
-minimum_value = 200     # only peaks with intensity above this are returned
-maximum_number = 1000   # cut off peak finding after this number are found
+minimum_value = 50     # only peaks with intensity above this are returned
+maximum_number = 2000   # cut off peak finding after this number are found
 
 # source of image for peak picking. if 'file', you must set path 
 # variables below, if 'image' you must set image variables
-findparticles_source = 'image'      # 'image' or 'file'
-findparticles_image = image   # define image if 'image' chosen
+findparticles_source = 'file'      # 'image' or 'file'
 
+#type in the name for the output xy array
+findparticles_output = 'xy'
+
+if findparticles_source == 'image':
+    findparticles_image = image   # define image if 'image' chosen
+    
 # use below to overide parameter values from common.py
 ######################################################################
 findparticles_directory = image_directory   # directory where image file is stored
@@ -58,7 +63,10 @@ print('mean / STD peak intensity: {:3.2f} / {:3.2f}'.format(amplitudes.mean(),am
 
 fig, ax = plt.subplots()
 ax.hist(amplitudes,bins=100)
+ax.set_ylabel('frequency')
+ax.set_xlabel('intensity')
 plt.title(image_path)
 
-keys = ['x', 'y', 'maximum']
+# set the chosen output variable to be a copy of the xy array
+exec( findparticles_output + ' = np.copy(xy)' )
 
