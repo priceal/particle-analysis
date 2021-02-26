@@ -21,7 +21,7 @@ v. 2021 02 21
 
 """
 # define particle dataframe (contains x,y coords of particles)
-track_xy = particle0
+track_xy = particle140
 
 # define any peaks to exclude
 track_exclude = False

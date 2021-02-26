@@ -7,7 +7,7 @@ v. 2021 01 27
 
 # set frames to display: xy = the particle dataframe and image = image number
 displayframes_xy = particle0
-displayframes_image = 0
+displayframes_image = 500
                      
 ## use below to overide parameter values from common.py
 ######################################################################

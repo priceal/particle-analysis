@@ -7,15 +7,19 @@ v. 2021 02 21
 analyze_shape_stats = True
 analyze_mobility_stats = True
 
-numbins = 60
+
+analyzeGroup = addStatsGroup
+
+
+numbins = 80
 
 #############################################################################
 #############################################################################
 
 # create plots
 print("creating summary dataframes")
-trackingMean = trackingGroup.mean()
-trackingStd = trackingGroup.std()
+trackingMean = analyzeGroup.mean()
+trackingStd = analyzeGroup.std()
 plotcols = ["max", "sum" , "<x>", "<y>", "<xx>", "<xy>", "<yy>" ]
 
 print("creating summary plots")
@@ -30,12 +34,10 @@ if analyze_shape_stats:
 #    trackingMean.plot.scatter(x='sum',y='max',ax=ax[1])
     
     sns.jointplot(data=trackingMean, x='<xx>', y='<yy>', \
-                  marginal_ticks=True, \
                   marginal_kws=dict(bins=numbins))
     plt.suptitle('particle shape statistics')
     
     sns.jointplot(data=trackingMean, x='sum', y='max', \
-                  marginal_ticks=True, \
                   marginal_kws=dict(bins=numbins))
     plt.suptitle('particle intensity statistics')
     
@@ -43,7 +45,6 @@ if analyze_shape_stats:
 if analyze_mobility_stats:
     
     sns.jointplot(data=trackingStd, x='<x>', y='<y>', \
-                  marginal_ticks=True, \
                   marginal_kws=dict(bins=numbins))
     plt.suptitle('particle mobility statistics')
     

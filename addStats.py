@@ -10,29 +10,38 @@ analyze_mobility_stats = True
 numbins = 100
 
 stats_index = 1
-stats_range = (10,18)
+stats_range = (92,140)  # inclusive range
 
-stats_particle = particle0[:3]
+stats_particle = particle140
 
 stats_tracking = tracking
 
-duration = 200
 
 #############################################################################
 #############################################################################
 
-
+# determine tracking range
+track_range = (int(stats_tracking.iloc[0]['image']),int(stats_tracking.iloc[-1]['image']))
+track_length = track_range[1]-track_range[0] # actually one less
 
 # create the filter
-
 numberParticles = len(stats_particle)
-numberImages = stats_range[1] - stats_range[0] + 1
+numberImages = stats_range[1] - stats_range[0]  + 1
 
-tmp = [False]*stats_range[0]+[True]*numberImages+[False]*(duration-stats_range[1])
-temprange = np.array( tmp * numberParticles)
+tmp=np.array( \
+    [False]*stats_range[0]+[True]*numberImages+[False]*(track_length-stats_range[1]) )
+    
+temprange = np.broadcast_to(tmp,(numberParticles,len(tmp)))
+finalrange = temprange.transpose().flatten()
 
-tmp2 = []
-for dwl in stats_particle['dwell']:
-    print(dwl)
-    temp2 += [True]*dwl+[False]*(duration-dwl)
+
+
+
+addStatsGroup = stats_tracking[finalrange].groupby('particle')
+
+
+#tmp2 = []
+#for dwl in stats_particle['dwell']:
+#    print(dwl)
+#    temp2 += [True]*dwl+[False]*(duration-dwl)
 
