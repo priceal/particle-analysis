@@ -30,7 +30,8 @@ if track_exclude:
 
 #if you want plots, set to True
 track_plots = True
-track_plot_intensity = True
+if track_plots:
+    plotcols = ["sum" , "<x>", "<y>"]
 
 ## use below to overide parameter values from common.py
 ######################################################################
@@ -92,18 +93,9 @@ print(tracking.describe())
 
 # plot results if asked to
 if track_plots:
-    plotcols = ["max", "sum" , "<x>", "<y>", "<xx>", "<xy>", "<yy>" ]
-    fig,ax = plt.subplots(7,1)
-    [ ax[i].set_ylabel(plotcols[i]) for i in range(7) ]
+    fig,ax = plt.subplots(len(plotcols),1)
+    [ ax[i].set_ylabel(plotcols[i]) for i in range(len(plotcols)) ]
     for pn in track_xy.index:
         trackingGroup.get_group(pn)[plotcols+['image']].\
                         plot(x='image',subplots=True,ax =ax, legend=False)
-                                   
-if track_plot_intensity:
-    plotcols = ["max", "sum"  ]
-    fig,ax = plt.subplots(2,1)
-    [ ax[i].set_ylabel(plotcols[i]) for i in range(2) ]
-    for pn in track_xy.index:
-        trackingGroup.get_group(pn)[plotcols+['image']].\
-                        plot(x='image',subplots=True,ax =ax, legend=False)
-
+ 
