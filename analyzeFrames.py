@@ -1,6 +1,6 @@
 """
 Analyzes an array of frames using one of these methods: 
-intensity, centroid, gauss, or PCA
+intensity, centroid, gauss, or PCA. Frames are taken from an image.
 
 VARIABLE SET BY SCRIPT:
 data     RESULTS OF ANALYSIS, SHAPE = (NUMFRAMES,NUMDIMENSIONS)
@@ -18,7 +18,6 @@ analyze_image = 0
 analyze_method = 'centroid'    # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
-# if other method, can ignore these
 if analyze_method == 'pca' :
     analyze_components =  [ V[0], V[1] ]
     analyze_meanframe = meanframe
@@ -35,14 +34,12 @@ analyze_height = buffer_height
 analyze_background = background   # set to background to use default
 analyze_normalize = normalize       # set to normalize to use default
 
+# do not change code below this line
 ############################################################
 ############################################################
-
 # load in the frames
-analyze_frames = pa.cropframes(analyze_image, analyze_xy, \
-                                     bx = analyze_width, \
-                                     by = analyze_height, \
-                                     imgDF = imageDF)   
+analyze_frames = pa.cropframes(analyze_image, analyze_xy, bx = analyze_width,\
+                               by = analyze_height, imgDF = imageDF)   
 num_frames = len(analyze_frames)
 print( num_frames, 'frames loaded for analysis.')
 
@@ -59,12 +56,12 @@ pcalabel = []
 for i in range(pca_dim):
     pcalabel.append('comp {}'.format(i) )
     
+# define labels for plots and perform analysis
 analyzeMethods = { 
     'intensity' : ['max','min','sum'],
     'centroid' : ['<x>','<y>','<xx>','<xy>','<yy>'],
     'gauss' : ['x','y','sigma','amp','err'],
     'pca' : pcalabel    }
-
 if analyze_method in analyzeMethods.keys():
 
     # now perform tracking depending on method chosen

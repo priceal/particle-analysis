@@ -6,14 +6,14 @@ VARIABLES SET BY SCRIPT:
 tracking  a data frame with tracking results with following columns:
             "particle" : particle number
             "image" :   image number
-            "max" :     mas intensity in ROI
+            "max" :     max intensity in ROI
             "min" :     min intensity in ROI
             "sum" :     sum of intensities in ROI
-            "<x>" :     mean x
-            "<y>" :     mean y
-            "<xx>" :    mean xx
-            "<xy>" :    mean xy
-            "<yy>" :    mean yy
+            "<x>" :     mean x (centroid)
+            "<y>" :     mean y (centroid)
+            "<xx>" :    mean xx (2nd order moment)
+            "<xy>" :    mean xy (2nd order moment)
+            "<yy>" :    mean yy (2nd order moment)
 
 trackingGroup     above dataframe grouped by particle number
 
@@ -21,15 +21,15 @@ v. 2021 02 21
 
 """
 # define particle dataframe (contains x,y coords of particles)
-track_xy = particle140
+track_xy = particle0
 
-# define any peaks to exclude
+# define any peaks to exclude---these will be set subtracted from track_xy
 track_exclude = False
 if track_exclude:
     exclude_xy = xy599
 
-#if you want plots, set to True
-track_plots = True
+# if you want plots, set to True and define which series--currently unavailable
+track_plots = True 
 if track_plots:
     plotcols = ["sum" , "<x>", "<y>"]
 
@@ -58,8 +58,8 @@ tracking = pd.DataFrame ( {
     "<yy>" : []
     } )
 
-# exclude particles if asked to
-if track_exclude:
+# exclude particles if asked to---currently unavailable
+if False:
     track_xy = pa.subtractxy(track_xy,exclude_xy,bx=buffer_width,by=buffer_height)
     
 # define some arrays needed to form data frame
@@ -67,7 +67,7 @@ print("processing images..." )
 particleNums = track_xy.index.to_numpy()[:,np.newaxis]
 ones_column = np.ones(len(particleNums))[:,np.newaxis]
 
-# perform tracking
+# perform tracking image by image
 count = 0
 for image in range(track_range[0],track_range[1]+1):
     temp_frames = pa.cropframes(image,track_xy,bx=track_width,by=track_height,\

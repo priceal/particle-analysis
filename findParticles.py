@@ -4,17 +4,16 @@ Each particle should be only peak in neighborhood, whose size is given
 by ROI parameters (x_buffer and y_buffer)
 
 VARIABLE SET BY SCRIPT:
-xyN         data frame containing the X,Y PIXEL COORDS OF PARTICLES FOUND 
-            and the intensities of the peaks, N is the image number
+particleN    data frame containing the X,Y PIXEL COORDS OF PARTICLES FOUND 
+             and the intensities of the peaks, N is the image number
 
 v. 2021 02 13
 
 """
 # parameters for peak picking
-minimum_value = 120    # only peaks with intensity above this are returned
-maximum_number = 1000   # cut off peak finding after this number are found
-# image number to use for picking
-findparticlesImageNumber = 140
+minimum_value = 50    # only peaks with intensity above this are returned
+maximum_number = 3   # cut off peak finding after this number are found
+findparticlesImageNumber = 0   # image number to use for picking
 
 # for particle filtering added as a pre-filter
 findparticles_prefilter = False
@@ -23,7 +22,6 @@ if findparticles_prefilter:
     dims = (11,11) # window size for particle filter kernel
     norm = 3.0    # normalization for +kernal portion
 
-    
 # use below to overide parameter values from common.py
 ######################################################################
 findparticles_width = buffer_width      # x buffer size for zero-ing out peak after picking

@@ -6,8 +6,8 @@ v. 2021 02 21
 """
 
 # define data directory and image file range
-image_directory = 'C:/Users/priceal/Desktop/DOCUMENTS/research/PROJECTS/BLT_old/BLT/rs0625'
-image_range = [0, 200]
+image_directory = 'C:/Users/priceal/Desktop/DOCUMENTS/research/PROJECTS/BLT_old/BLT/E51'
+image_range = [0, 599]
 
 # parameters for ROI size around particles
 # rectangular ROI will have size 2*width+1 X 2*height+1
