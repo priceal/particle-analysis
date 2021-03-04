@@ -31,7 +31,7 @@ if track_exclude:
 # if you want plots, set to True and define which series--currently unavailable
 track_plots = True 
 if track_plots:
-    plotcols = ["sum" , "<x>", "<y>"]
+    plotcols = ["sum" ]
 
 ## use below to overide parameter values from common.py
 ######################################################################
@@ -87,7 +87,7 @@ for image in range(track_range[0],track_range[1]+1):
 trackingGroup = tracking.groupby('particle')
          
 print("processed {} images X {} particles each = {} ROIs".\
-      format(track_range[1]-track_range[0],len(track_xy),len(tracking)))
+      format(track_range[1]-track_range[0]+1,len(track_xy),len(tracking)))
 print('SUMMARY OF RESULTS: tracking')
 print(tracking.describe())
 

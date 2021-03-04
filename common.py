@@ -11,8 +11,8 @@ image_range = [0, 599]
 
 # parameters for ROI size around particles
 # rectangular ROI will have size 2*width+1 X 2*height+1
-buffer_width = 3           # x buffer  
-buffer_height = 3            # y buffer 
+buffer_width = 4           # x buffer  
+buffer_height = 4            # y buffer 
 
 # parameters for displaying ROIs
 columns = 10     # number of columns in figure
