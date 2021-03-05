@@ -4,7 +4,7 @@ Analyzes results of tracking and creates plots
 v. 2021 02 21
 """
 plot_particle = particle0
-plotIndex = 2
+plotIndex = 1
 
 plot_shape_stats = False
 plot_mobility_stats = True

@@ -9,7 +9,7 @@ v. 2021 02 21
 # particle df must contain exactly same particles in same order as tracking df
 threshold_particle = particle0  # the particle dataframe
 threshold_tracking = tracking   # the tracking dataframe
-threshold = 400                 # threshold level
+threshold = 250                 # threshold level
 
 threshold_hist = True  # create histogram plot of dwell times
 numbins = 80           # bins for histogram
@@ -18,7 +18,7 @@ numbins = 80           # bins for histogram
 #############################################################################
 
 # create particle grouping for thresholding
-print("creating summary dataframes")
+print("grouping by particle and determining dwells by threshold method ...")
 trackingGroup = threshold_tracking.groupby('particle')
 
 # apply threshold() particle by particle
@@ -29,6 +29,7 @@ for pn in threshold_particle.index:
 
 # add dwell series to particle df and print summary
 threshold_particle['dwell'] = dwelllist
+print('SUMMARY OF RESULTS ...')
 print(threshold_particle.describe())
 
 # plot if asked to

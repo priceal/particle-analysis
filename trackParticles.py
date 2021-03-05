@@ -31,7 +31,7 @@ if track_exclude:
 # if you want plots, set to True and define which series--currently unavailable
 track_plots = True 
 if track_plots:
-    plotcols = ["sum" ]
+    plotcols = ["sum",'max' ]
 
 ## use below to overide parameter values from common.py
 ######################################################################

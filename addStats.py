@@ -7,16 +7,16 @@ have added dwell series to particle df if limitDwell = True.
 # particle df must contain exactly same particles in same order as tracking df
 stats_particle = particle0      # the particle dataframe
 stats_tracking = tracking       # the tracking dataframe
-stats_range = (170,599)          # image range (inclusive) to analyze
+stats_range = (90,599)          # image range (inclusive) to analyze
 limitDwell = True              # limit range for each particle individually
                                 # by the dwell time
 
 # choose which type of statistics to calculate and add
-stats_shape = True    # these concern particle shape
+stats_shape = True   # these concern particle shape
 stats_mobility = True # these concern particle dynamics
 
 # set an index to indentify these stats in the particle df
-stats_index = 2
+stats_index = 1
 
 #############################################################################
 #############################################################################
@@ -28,6 +28,7 @@ numberParticles = len(stats_particle)
 numberImages = stats_range[1] - stats_range[0]  + 1
 
 # create filter to limit images considered to stats_range
+print('creating filter to limit results to image range ...')
 tmp=np.array( \
     [False]*stats_range[0]+[True]*numberImages+[False]*(track_length-stats_range[1]) )
 statsRangeFilter = np.broadcast_to(tmp,(numberParticles,len(tmp))).transpose().flatten()
@@ -36,12 +37,14 @@ statsRangeFilter = np.broadcast_to(tmp,(numberParticles,len(tmp))).transpose().f
 # present, then set final filter to logical AND of the two filters
 finalFilter = statsRangeFilter    # default filter
 if limitDwell:
+    print('creating filter to limit results by dwell time ...')
     dwelltmp= []
     for dwl in stats_particle['dwell']:
         dwelltmp.append([True]*dwl+[False]*(track_length-dwl+1) )
     dwellFilter = np.array(dwelltmp).transpose().flatten()
     finalFilter = statsRangeFilter & dwellFilter
 
+print('applying filters, grouping and analyzing...')
 addStatsGroup = stats_tracking[finalFilter].groupby('particle')
 stats_mean = addStatsGroup.mean()
 stats_std = addStatsGroup.std()
@@ -55,3 +58,5 @@ for label in stats_mean_cols:
 for label in stats_std_cols:
     stats_particle['s'+label+str(stats_index)]=stats_std[label]
 
+print('SUMMARY OF RESULTS ...')
+print(stats_particle.describe())
