@@ -29,7 +29,7 @@ if track_exclude:
     exclude_xy = xy599
 
 # if you want plots, set to True and define which series--currently unavailable
-track_plots = True 
+track_plots = False 
 if track_plots:
     plotcols = ["sum",'max' ]
 

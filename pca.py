@@ -1,6 +1,8 @@
 """
-Performs PCA on set of frames. It will calculate the eigenvector and
-singular values as well as the mean peak image.
+Performs PCA on set of frames. The frames are defined by the particle df and
+the image used. Using the pca_width and pca_height, frames centered on the 
+particle coordinates are cropped from the image. Then it will calculate the 
+eigenvectors and singular values as well as the mean frame.
 First 15 eigenimages are displayed and first 20 SVs are plotted.
 
 VARIABLES SET BY SCRIPT:
@@ -9,20 +11,27 @@ S          EIGENVALUES OR SINGULAR VALUES
 U          SET OF TRANSFORMATION MATRICES
 meanframe      MEAN OF ALL FRAMES
 
-v. 2021 02 02
+v. 2021 03 11
 
 """
-
 # define frames to analyze
-pca_frames = frames         # input frames, use copy()
+pca_particle = particle0         # particle dataframe
+pca_image = 0                    # image to use
 
 ## use below to overide parameter values from common.py
 ######################################################################
+pca_width = buffer_width
+pca_height = buffer_height
 pca_background = background    # set to background to use default
 pca_normalize = normalize       # set to normalize to use default
 
 ############################################################
 ############################################################
+
+# load in the frames
+pca_frames = pa.cropframes(pca_image, pca_particle, bx = pca_width, \
+                                     by = pca_height, imgDF = imageDF)
+
 numframes, n, m = pca_frames.shape   
 
 listall=[] # create an array of all data

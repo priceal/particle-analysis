@@ -15,11 +15,11 @@ analyze_xy = particle0
 analyze_image = 0
 
 # here define the method of tracking
-analyze_method = 'centroid'    # either 'intensity, 'centroid', 'gauss' or 'pca'
+analyze_method = 'pca'    # either 'intensity, 'centroid', 'gauss' or 'pca'
 
 # if pca method is chosen, must define pca principle components here
 if analyze_method == 'pca' :
-    analyze_components =  [ V[0], V[1] ]
+    analyze_components =  [ V[1], V[2] ]
     analyze_meanframe = meanframe
 
 # choose to plot tracking results versus frame number also
