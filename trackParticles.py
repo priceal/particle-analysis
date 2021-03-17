@@ -9,8 +9,8 @@ tracking  a data frame with tracking results with following columns:
             "max" :     max intensity in ROI
             "min" :     min intensity in ROI
             "sum" :     sum of intensities in ROI
-            "<x>" :     mean x (centroid)
-            "<y>" :     mean y (centroid)
+            "x" :     mean x (centroid)
+            "y" :     mean y (centroid)
             "<xx>" :    mean xx (2nd order moment)
             "<xy>" :    mean xy (2nd order moment)
             "<yy>" :    mean yy (2nd order moment)
@@ -29,7 +29,7 @@ if track_exclude:
     exclude_xy = xy599
 
 # if you want plots, set to True and define which series--currently unavailable
-track_plots = False 
+track_plots = True 
 if track_plots:
     plotcols = ["sum",'max' ]
 
@@ -37,7 +37,7 @@ if track_plots:
 ######################################################################
 track_width = buffer_width              
 track_height = buffer_height
-track_range = image_range     # inclusive range
+track_range = (0,599)     # inclusive range
 track_background = background
 track_normalize = normalize
 ######################################################################
@@ -51,8 +51,8 @@ tracking = pd.DataFrame ( {
     "max" : [],
     "min" : [],
     "sum" : [],
-    "<x>" : [],
-    "<y>" : [],
+    "x" : [],
+    "y" : [],
     "<xx>" : [],
     "<xy>" : [],
     "<yy>" : []

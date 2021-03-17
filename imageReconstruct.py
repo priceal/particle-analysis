@@ -5,13 +5,16 @@ which particle with recon_particle_number. Set recon_image to the
 image you used for pca.py.
 
 """
-# set frames to analyze: xy = the xy dataframe and image = image number
+# set particle dataframe and particle number to resconstruct. also set image to use
 recon_particle = particle0
-recon_particle_number = 0
+recon_particle_number = 88
 recon_image = 0
 
 # if pca method is chosen, must define pca principle components here
-recon_components =  [ V[0], V[1], V[2], V[3] ]
+recon_components =  [ V[0], V[1], V[2], V[3], V[4], V[5], V[6]]
+
+recon_cmap = 'gray'
+recon_clip = True
 
 ## use below to overide parameter values from common.py
 ######################################################################
@@ -51,26 +54,28 @@ axr[0].set_xticks([])
 axr[0].set_yticks([])
 #axr[0].imshow(recon_frame,cmap='gray')
 axr[0].imshow(recon_frame_back, norm=TwoSlopeNorm(vcenter=0), \
-                    cmap='seismic', interpolation='none')    
+                    cmap=recon_cmap, interpolation='none')    
 
 axr[1].set_title('mean' )
 axr[1].set_xticks([])
 axr[1].set_yticks([])
 #axr[1].imshow(recon_meanframe,cmap='gray')
 axr[1].imshow(recon_meanframe, norm=TwoSlopeNorm(vcenter=0), \
-                    cmap='seismic', interpolation='none')    
+                    cmap=recon_cmap, interpolation='none')    
 
 for i in range(len(recon_components)):
     axr[i+2].imshow(V[i].reshape(n,m), norm=TwoSlopeNorm(vcenter=0), \
                     cmap='seismic', interpolation='none')    
-    axr[i+2].set_title(str(i) )
+    axr[i+2].set_title('{} ({:3.1f})'.format(i,data[i]) ) 
     axr[i+2].set_xticks([])
     axr[i+2].set_yticks([])
     
+if recon_clip:
+    reconstruction = np.clip(reconstruction,0,np.Inf)    
 axr[len(recon_components)+2].set_title('recon' )
 axr[len(recon_components)+2].set_xticks([])
 axr[len(recon_components)+2].set_yticks([])
 axr[len(recon_components)+2].imshow(reconstruction,cmap='gray')
 axr[len(recon_components)+2].imshow(reconstruction, norm=TwoSlopeNorm(vcenter=0), \
-                    cmap='seismic', interpolation='none')    
+                    cmap=recon_cmap, interpolation='none')    
     

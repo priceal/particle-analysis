@@ -9,7 +9,7 @@ v. 2021 02 21
 # particle df must contain exactly same particles in same order as tracking df
 threshold_particle = particle0  # the particle dataframe
 threshold_tracking = tracking   # the tracking dataframe
-threshold = 250                 # threshold level
+threshold = 200                 # threshold level
 
 threshold_hist = True  # create histogram plot of dwell times
 numbins = 80           # bins for histogram

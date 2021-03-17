@@ -4,19 +4,19 @@ Analyzes results of tracking and creates plots
 v. 2021 02 21
 """
 plot_particle = particle0
-plotIndex = 0
+plotIndex = 1
 
-plot_shape_stats = False
+
+plot_shape_stats = True
 plot_mobility_stats = True
 
-numbins = 100
+numbins = 120
 
 #############################################################################
 #############################################################################
-
 si = str(plotIndex)
 plotMeanCols = ["<xx>"+si, "<xy>"+si, "<yy>"+si ]
-plotStdCols = ['s<x>'+si, 's<y>'+si]
+plotStdCols = ['Sx'+si, 'Sy'+si ]
 
 print("creating summary plots")
 if plot_shape_stats:
@@ -32,14 +32,15 @@ if plot_shape_stats:
     
 if plot_mobility_stats:
     
-    coordMax = 1.1*max(plot_particle['s<x>'+si].max(), plot_particle['s<y>'+si].max())
-    plotStatsMobG = sns.JointGrid(data=plot_particle, x='s<x>'+si, y='s<y>'+si)
+    coordMax = 1.1*max(plot_particle['Sx'+si].max(), plot_particle['Sy'+si].max())
+    plotStatsMobG = sns.JointGrid(data=plot_particle, x='Sx'+si, y='Sy'+si)
     plotStatsMobG.plot_joint(sns.scatterplot)
     plotStatsMobG.plot_marginals(sns.histplot,bins=numbins)
     plotStatsMobG.ax_joint.set_aspect('equal')
     plotStatsMobG.ax_joint.set_xlim((-0.03,coordMax))
     plotStatsMobG.ax_joint.set_ylim((-0.03,coordMax))
     plt.suptitle('particle mobility statistics')
-    
+    plt.figure()
+    sns.histplot(plot_particle['Cxy'+si])
     
     

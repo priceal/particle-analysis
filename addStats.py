@@ -7,8 +7,8 @@ have added dwell series to particle df if limitDwell = True.
 # particle df must contain exactly same particles in same order as tracking df
 stats_particle = particle0      # the particle dataframe
 stats_tracking = tracking       # the tracking dataframe
-stats_range = (0,19)          # image range (inclusive) to analyze
-limitDwell = False              # limit range for each particle individually
+stats_range = (0,74)          # image range (inclusive) to analyze
+limitDwell = True              # limit range for each particle individually
                                 # by the dwell time
 
 # choose which type of statistics to calculate and add
@@ -48,15 +48,20 @@ print('applying filters, grouping and analyzing...')
 addStatsGroup = stats_tracking[finalFilter].groupby('particle')
 stats_mean = addStatsGroup.mean()
 stats_std = addStatsGroup.std()
+stats_covar = addStatsGroup[['x','y']].cov()
+stats_covar_xx = stats_covar.loc[:,'x'].loc[:,'x']
+stats_covar_xy = stats_covar.loc[:,'x'].loc[:,'y']
+stats_covar_xx = stats_covar.loc[:,'y'].loc[:,'y']
 
 # create labels for series to add to particle df
-
 stats_mean_cols = ['<xx>','<xy>','<yy>']
-stats_std_cols = ['<x>', '<y>' ]
+stats_std_cols = ['x', 'y' ]
 for label in stats_mean_cols:
     stats_particle[label+str(stats_index)]=stats_mean[label]
+    
 for label in stats_std_cols:
-    stats_particle['s'+label+str(stats_index)]=stats_std[label]
+    stats_particle['S'+label+str(stats_index)]=stats_std[label]
+stats_particle['Cxy'+str(stats_index)] = stats_covar_xy
 
 print('SUMMARY OF RESULTS ...')
 print(stats_particle.describe())

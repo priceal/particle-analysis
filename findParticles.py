@@ -11,7 +11,7 @@ v. 2021 02 13
 
 """
 # parameters for peak picking
-minimum_value = 50    # only peaks with intensity above this are returned
+minimum_value = 115    # only peaks with intensity above this are returned
 maximum_number = 1000   # cut off peak finding after this number are found
 findparticlesImageNumber = 0   # image number to use for picking
 
