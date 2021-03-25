@@ -954,9 +954,7 @@ def displayframes(frames,n,m,rescale=False):
     ax_flatten = ax.flatten()
     for axs,frame in zip(ax_flatten,frames):
         axs.imshow(frame,cmap='gray',interpolation='nearest',vmin=low,vmax=high)
-        axs.set_xticks([])
-        axs.set_yticks([])
-        
+        axs.set_axis_off()     
     return
 
 ##################################################################

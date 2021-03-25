@@ -14,20 +14,20 @@ v. 2021 01 27
 # if 'directory' you are intending to create a time history of
 # a single particle throughout the image files in the directory
 frames_source = 'image'      # 'image' or 'file' or 'directory'
-frames_image = image         # define image if 'image' chosen
+frames_image = 0         # define image if 'image' chosen
 
 # define array of frame centers (xy) cropping multiple boxes from a 
 # single image for 'image' and 'file' option. Define a single [x,y] 
 # if you are cropping a single box from multiple image files stored 
 # in frames_directory---this option is for creating a time history 
 # of a single particle
-frames_xy = xy
+frames_xy = particle0
 #frames_xy = xy[10]  #use this option if choosing 'directory' 
 
 ## use below to overide parameter values from common.py
 ######################################################################
 frames_directory = image_directory
-frames_image_file = image_file
+#frames_image_file = image_file
 frames_width = buffer_width              
 frames_height = buffer_height
 frames_range = image_range
@@ -45,7 +45,7 @@ if frames_source == 'file':
         
 elif frames_source == 'image':
     frames = \
-        pa.cropframes(frames_image,frames_xy,bx=frames_width,by=frames_height)
+        pa.cropframes(frames_image,frames_xy,bx=frames_width,by=frames_height,imgDF=imageDF)
     print("{} frames made from image.".format(len(frames)))
 
 elif frames_source == 'directory':

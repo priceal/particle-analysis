@@ -32,7 +32,7 @@ num_tracks = len(displayTracks_particle)
 figure_count = displayTracks_rows*displayTracks_columns
 full_figs = int(num_tracks/figure_count)
 print('track count = ', num_tracks)
-print('track plot dimensions: {} x {}'.format(displayTracks_width,displayTracks_height))
+print('track plot dimensions: {} x {}'.format(2*displayTracks_width,2*displayTracks_height))
 print('display layout: {} rows X {} columns.'.format(displayTracks_columns,displayTracks_rows))
 print( '{} tracks per figure X {} figures'.format(figure_count, full_figs))
 if full_figs*figure_count < num_tracks:
@@ -57,15 +57,12 @@ if num_tracks >= figure_count:
             limits = (images < dwellLimit[df_count]) & (images < displayTracks_range[1]) & (images > displayTracks_range[0])
             pdfLimited = pdf[ limits ]
             pdfLimited.plot.scatter(x='x',y='y',marker='.',ax=ax_flatten[ax_count])
-            xCenter = pdfLimited['x'].mean()
-            yCenter = pdfLimited['y'].mean()
+            xCenter = pdfLimited['x'].mean(); yCenter = pdfLimited['y'].mean()
             if np.isnan(xCenter) or np.isnan(yCenter):
                 xCenter, yCenter = 0, 0
         
-            ax_flatten[ax_count].set_xticks([])
-            ax_flatten[ax_count].set_yticks([])
-            ax_flatten[ax_count].set_xlabel('')
-            ax_flatten[ax_count].set_ylabel('')
+            ax_flatten[ax_count].set_xticks([]); ax_flatten[ax_count].set_yticks([])
+            ax_flatten[ax_count].set_xlabel(''); ax_flatten[ax_count].set_ylabel('')
             ax_flatten[ax_count].set_aspect('equal')
             ax_flatten[ax_count].set_xlim((xCenter-displayTracks_width,xCenter+displayTracks_width))
             ax_flatten[ax_count].set_ylim((yCenter-displayTracks_height,yCenter+displayTracks_height))
@@ -83,14 +80,11 @@ if last < num_tracks:
         limits = (images < dwellLimit[df_count]) & (images < displayTracks_range[1]) & (images > displayTracks_range[0])
         pdfLimited = pdf[ limits ]
         pdfLimited.plot.scatter(x='x',y='y',marker='.',ax=ax_flatten[ax_count])
-        xCenter = pdfLimited['x'].mean()
-        yCenter = pdfLimited['y'].mean()
+        xCenter = pdfLimited['x'].mean(); yCenter = pdfLimited['y'].mean()
         if np.isnan(xCenter) or np.isnan(yCenter):
             xCenter, yCenter = 0, 0
-        ax_flatten[ax_count].set_xticks([])
-        ax_flatten[ax_count].set_yticks([])
-        ax_flatten[ax_count].set_xlabel('')
-        ax_flatten[ax_count].set_ylabel('')
+        ax_flatten[ax_count].set_xticks([]); ax_flatten[ax_count].set_yticks([])
+        ax_flatten[ax_count].set_xlabel(''); ax_flatten[ax_count].set_ylabel('')
         ax_flatten[ax_count].set_aspect('equal')
         ax_flatten[ax_count].set_xlim((xCenter-displayTracks_width,xCenter+displayTracks_width))
         ax_flatten[ax_count].set_ylim((yCenter-displayTracks_height,yCenter+displayTracks_height))          
