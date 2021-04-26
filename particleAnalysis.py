@@ -338,7 +338,7 @@ def particleFilter(image,sigma,dims,norm=1.0):
     kernel = pkernel - pkernel.mean()
     kernel = norm*kernel/np.clip(kernel,0,np.Inf).sum()
     
-    return cv.filter2D(image,-1,kernel)
+    return cv.filter2D(image,cv.CV_16U,kernel)
 
 ##############################################################################
 ##############################################################################
@@ -707,7 +707,10 @@ def pixelMax(image):
 ##############################################################################
 ##############################################################################
   
-def pickxy(image,n):
+  
+    
+    
+def pickxy(image, imgDF = None, n = 100000 ):
     """
     allows use to pick peaks manually, user must enter number of
     peaks that will be picked
@@ -725,10 +728,16 @@ def pickxy(image,n):
         DESCRIPTION.
 
     """
+    if isinstance(image,int):  # image index given
+        image = loadim( imgDF['path'][image] )
+    elif isinstance(image,str):  # image filename or path given
+        image = loadim( returnpath(image) )
+    else:  # image passed to function
+        pass
     
     fig, ax = plt.subplots()
-    ax.imshow(image)
-    out = plt.ginput(n=n,timeout=60)
+    ax.imshow(image,cmap='gray',interpolation='nearest')
+    out = plt.ginput(n=n,timeout=-1,mouse_add=None,mouse_pop=None,mouse_stop=None)
     
     return np.array(out)
 
