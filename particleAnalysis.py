@@ -932,21 +932,21 @@ def showframes(frames,delt=0.001):
 #################################################################
 #################################################################
 
-def displayframes(frames,n,m,rescale=False):
+def displayframes(frames,n,m,rescale=False,count=0):
     """
     displays an array of frames in a n x m grid
     len(frames) is assumed greater than n*m, but can be less
 
     Parameters
     ----------
-    frames : TYPE
-        DESCRIPTION.
-    n : TYPE
-        DESCRIPTION.
-    m : TYPE
-        DESCRIPTION.
-    rescale : TYPE, optional
-        DESCRIPTION. The default is False.
+    frames : array
+        array of frames
+    n : int
+        rows.
+    m : int
+        columns.
+    rescale : bool, optional
+        sets autoscale. The default is False.
 
     Returns
     -------
@@ -963,7 +963,10 @@ def displayframes(frames,n,m,rescale=False):
     ax_flatten = ax.flatten()
     for axs,frame in zip(ax_flatten,frames):
         axs.imshow(frame,cmap='gray',interpolation='nearest',vmin=low,vmax=high)
-        axs.set_axis_off()     
+        axs.text(-4,3,str(count))
+ #       axs.set_title(str(count),loc='left',fontdict = {'fontsize':5})
+        axs.set_axis_off()
+        count += 1
     return
 
 ##################################################################

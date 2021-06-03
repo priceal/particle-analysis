@@ -46,11 +46,11 @@ if num_frames >= figure_count:
         last = first + figure_count
         print( 'figure {}: frames {} to {}'.format(figure+1, first, last-1))
         pa.displayframes(displayframes_frames[first:last],rows,columns, \
-                         rescale = displayframes_auto_scale)
+                         rescale = displayframes_auto_scale, count=first)
 
 if last < num_frames:
     print( 'figure {}: frames {} to {}'.format(full_figs+1, last, num_frames-1))
     pa.displayframes(displayframes_frames[last:],rows,columns, \
-                     rescale = displayframes_auto_scale)
+                     rescale = displayframes_auto_scale, count=last)
 
 plt.show()
