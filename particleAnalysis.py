@@ -481,8 +481,11 @@ def cropframes(image,xy,bx=3,by=3,imgDF=None):
     else:  # image passed to function
         pass
     
+    if isinstance(xy,pd.DataFrame):
+        xy = xy[['x','y']].to_numpy()
+    
     listall = []
-    for center in xy[['x','y']].to_numpy():
+    for center in xy:
         yl,yu,xl,xu = box(center,image.shape,bx=bx,by=by)
         listall.append(image[yl:yu,xl:xu].copy())
     
